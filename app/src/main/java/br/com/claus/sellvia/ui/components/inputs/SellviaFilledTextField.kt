@@ -9,8 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.claus.sellvia.core.theme.SellviaBlue
-import br.com.claus.sellvia.core.theme.SellviaBlueDark
+import br.com.claus.sellvia.ui.theme.SellviaPrimary
+import br.com.claus.sellvia.ui.theme.SellviaSecondary
+import br.com.claus.sellvia.ui.theme.SellviaTertiary
 
 @Composable
 fun SellviaFilledTextField(
@@ -36,11 +37,11 @@ fun SellviaFilledTextField(
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White.copy(alpha = 0.96f),
             unfocusedContainerColor = Color.White.copy(alpha = 0.96f),
-            focusedIndicatorColor = SellviaBlue,
+            focusedIndicatorColor = SellviaPrimary,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedLabelColor = SellviaBlue,
-            unfocusedLabelColor = SellviaBlueDark.copy(alpha = 0.7f),
-            cursorColor = SellviaBlue,
+            focusedLabelColor = SellviaPrimary,
+            unfocusedLabelColor = SellviaSecondary.copy(alpha = 0.7f),
+            cursorColor = SellviaPrimary,
             focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black
         )

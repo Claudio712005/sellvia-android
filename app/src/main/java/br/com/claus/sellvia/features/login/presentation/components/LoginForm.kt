@@ -1,77 +1,110 @@
 package br.com.claus.sellvia.features.login.presentation.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import br.com.claus.sellvia.core.theme.SellviaBlue
-import br.com.claus.sellvia.ui.components.inputs.SellviaFilledTextField
+import androidx.compose.ui.unit.sp
+import br.com.claus.sellvia.ui.theme.SellviaPrimary
 
 @Composable
 fun LoginForm(
     email: String,
-    password: String,
-    isLoading: Boolean,
-    error: String?,
     onEmailChange: (String) -> Unit,
+    password: String,
     onPasswordChange: (String) -> Unit,
-    onSubmit: () -> Unit
+    modifier: Modifier = Modifier
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+    var rememberMe by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-
-        SellviaFilledTextField(
-            value = email,
-            onValueChange = onEmailChange,
-            label = "E-mail"
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SellviaFilledTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            label = "Senha"
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = onSubmit,
-            enabled = !isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = SellviaBlue)
-        ) {
+        Column {
             Text(
-                text = if (isLoading) "Carregando..." else "Acessar",
-                color = Color.White
+                text = "E-mail",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = onEmailChange,
+                placeholder = { Text("Digite seu e-mail", color = Color.LightGray) },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color(0xFFEFEFEF),
+                    focusedContainerColor = Color(0xFFF7F8F9),
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedBorderColor = SellviaPrimary.copy(alpha = 0.5f)
+                )
             )
         }
 
-        error?.let {
-            Spacer(modifier = Modifier.height(12.dp))
+        Column {
             Text(
-                text = it,
-                color = Color.Red
+                text = "Senha",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 6.dp)
             )
+            OutlinedTextField(
+                value = password,
+                onValueChange = onPasswordChange,
+                placeholder = { Text("Digite sua senha", color = Color.LightGray) },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    val image = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(image, contentDescription = null, tint = Color.Gray)
+                    }
+                },
+                singleLine = true,
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color(0xFFEFEFEF),
+                    focusedContainerColor = Color(0xFFF7F8F9),
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedBorderColor = SellviaPrimary.copy(alpha = 0.5f)
+                )
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    enabled = false,
+                    checked = rememberMe,
+                    onCheckedChange = { rememberMe = it },
+                    colors = CheckboxDefaults.colors(checkedColor = SellviaPrimary)
+                )
+                Text("Lembrar de mim", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+            }
+            TextButton(onClick = { }, enabled = false) {
+                Text("Esqueceu a senha?", style = MaterialTheme.typography.bodySmall, color = SellviaPrimary, fontWeight = FontWeight.Bold)
+            }
         }
     }
 }

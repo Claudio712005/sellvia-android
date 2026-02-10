@@ -1,44 +1,51 @@
 package br.com.claus.sellvia.ui.components.buttons
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.claus.sellvia.core.theme.SellviaBlue
+import br.com.claus.sellvia.ui.theme.SellviaPrimary
 
 @Composable
 fun SellviaPrimaryButton(
     text: String,
-    onClick: () -> Unit
-) {
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
     Button(
+        enabled = enabled,
         onClick = onClick,
-        modifier = Modifier
-            .width(220.dp)
-            .height(48.dp),
-        shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = SellviaBlue)
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = SellviaPrimary,
+            disabledContainerColor = SellviaPrimary.copy(alpha = 0.5f)
+        )
     ) {
-        Text(text = text, fontSize = 15.sp, color = Color.White)
+        Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
     }
 }
 
 @Composable
-fun SellviaSecondaryButton(text: String) {
+fun SellviaSecondaryButton(text: String, onClick: () -> Unit = {}) {
     OutlinedButton(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
-            .width(220.dp)
-            .height(48.dp),
-        shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(1.dp, SellviaBlue)
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(28.dp),
+        border = BorderStroke(1.dp, SellviaPrimary)
     ) {
-        Text(text = text, fontSize = 15.sp, color = SellviaBlue)
+        Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = SellviaPrimary)
     }
 }

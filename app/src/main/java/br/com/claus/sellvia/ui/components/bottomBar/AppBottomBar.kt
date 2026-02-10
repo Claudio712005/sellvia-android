@@ -1,17 +1,30 @@
-package br.com.claus.sellvia.ui.components.bottomBar
-
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import br.com.claus.sellvia.core.navigation.NavigationItem
+import br.com.claus.sellvia.ui.theme.LightBackground
+import br.com.claus.sellvia.ui.theme.SellviaNotSelected
+import br.com.claus.sellvia.ui.theme.SellviaPrimary
+import br.com.claus.sellvia.ui.theme.SellviaPrimaryDark
+import br.com.claus.sellvia.ui.theme.SellviaTertiary
 
 @Composable
 fun AppBottomBar(
@@ -21,45 +34,55 @@ fun AppBottomBar(
     val currentRoute = backStackEntry.value?.destination?.route
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-        tonalElevation = 8.dp
+        containerColor = LightBackground,
+        tonalElevation = 0.dp,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        NavigationItem.values().forEach { item ->
-            val selected = currentRoute == item.route::class.qualifiedName
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(72.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            NavigationItem.entries.forEach { item ->
+                val selected = currentRoute == item.route::class.qualifiedName
 
-            NavigationBarItem(
-                selected = selected,
-                label = {
-                    Text(
-                        text = item.title,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                    )
-                },
-                alwaysShowLabel = false,
-                onClick = {
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                },
-                icon = {
+                val backgroundColor = if (selected) {
+                    SellviaPrimary.copy(alpha = 0.15f)
+                } else {
+                    SellviaNotSelected.copy(alpha = 0.08f)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .height(48.dp)
+                        .width(48.dp)
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .background(backgroundColor)
+                        .clickable {
+                            navController.navigate(item.route) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.title,
-                        tint = if (selected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (selected) SellviaPrimary else SellviaPrimaryDark.copy(alpha = 0.6f),
+                        modifier = Modifier
+                            .height(24.dp)
+                            .width(24.dp)
                     )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            )
+
+                }
+            }
         }
     }
 }

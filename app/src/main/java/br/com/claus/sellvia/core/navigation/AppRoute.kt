@@ -29,3 +29,6 @@ sealed interface MainNavRoute : AppRoute
 
 @Serializable
 object HomeRoute : MainNavRoute
+
+@Serializable
+object ProductRoute: MainNavRoute
