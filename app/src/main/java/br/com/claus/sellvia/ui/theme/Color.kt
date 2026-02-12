@@ -10,7 +10,7 @@ val SellviaSecondary = Color(0xFF2CC1D1)
 val SellviaTertiary = Color(0xFF4DB6AC)
 val SellviaNotSelected = Color(0x2A16A1E0)
 
-val LightBackground = Color(0xFFF8FAFF)
+val LightBackground = Color(0x37F8FAFF)
 val LightSurface = Color(0xFFFFFFFF)
 val DarkBackground = Color(0xFF050B14)
 val DarkSurface = Color(0xFF0B1F3B)

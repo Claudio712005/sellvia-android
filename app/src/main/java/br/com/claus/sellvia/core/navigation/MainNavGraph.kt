@@ -22,11 +22,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.com.claus.sellvia.features.home.presentation.HomeScreen
+import br.com.claus.sellvia.features.listCategory.presentation.ListCategoryScreen
 
 @SuppressLint("RestrictedApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffoldNavGraph() {
+fun MainScaffoldNavGraph(
+    startDestination: Any = HomeRoute
+) {
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -62,11 +65,16 @@ fun MainScaffoldNavGraph() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = HomeRoute,
-            modifier = Modifier.padding(padding)
+            startDestination = startDestination,
+            modifier = Modifier.padding(top = padding.calculateTopPadding())
         ) {
             composable<HomeRoute> {
                 HomeScreen()
+            }
+            composable<CategoryRoute>{
+                ListCategoryScreen(
+                    bottomBarPadding = padding.calculateBottomPadding()
+                )
             }
         }
     }

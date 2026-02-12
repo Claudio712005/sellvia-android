@@ -1,59 +1,46 @@
 package br.com.claus.sellvia.features.login.presentation
 
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.claus.sellvia.features.login.domain.usecase.LoginUseCase
+import br.com.claus.sellvia.core.data.storage.TokenManager
+import br.com.claus.sellvia.features.login.data.LoginRepository
 import kotlinx.coroutines.launch
 
-class LoginViewModel(
-    private val loginUseCase: LoginUseCase
-) : ViewModel() {
+class LoginViewModel (
+    private val repository: LoginRepository,
+    private val tokenManager: TokenManager
+): ViewModel(){
 
-    private val _uiState = androidx.compose.runtime.mutableStateOf(LoginUiState())
-    val uiState = _uiState
+    var email by mutableStateOf("")
+    var password by mutableStateOf("")
+    var isLoading by mutableStateOf(false)
+    var errorMessage by mutableStateOf<String?>(null)
 
-    fun onEvent(event: LoginEvent) {
-        when (event) {
-
-            LoginEvent.Start ->
-                _uiState.value = _uiState.value.copy(startAnimation = true)
-
-            LoginEvent.ClickEnter ->
-                _uiState.value = _uiState.value.copy(showLoginForm = true)
-
-            LoginEvent.ClickBack ->
-                _uiState.value = _uiState.value.copy(showLoginForm = false)
-
-            is LoginEvent.EmailChanged ->
-                _uiState.value = _uiState.value.copy(email = event.value)
-
-            is LoginEvent.PasswordChanged ->
-                _uiState.value = _uiState.value.copy(password = event.value)
-
-            LoginEvent.SubmitLogin ->
-                login()
-        }
-    }
-
-    private fun login() {
+    fun onLoginClick(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            isLoading = true
+            errorMessage = null
+            try {
+                val response = repository.login(email, password)
+                onSuccess()
 
-            runCatching {
-                loginUseCase(
-                    _uiState.value.email,
-                    _uiState.value.password
-                )
-            }.onSuccess {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    isSuccess = true
-                )
-            }.onFailure {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = it.message
-                )
+                if (response.isSuccessful && response.body() != null) {
+                    val loginData = response.body()!!
+
+                    tokenManager.saveTokens(
+                        token = loginData.token,
+                        refreshToken = loginData.refreshToken
+                    )
+
+                    onSuccess()
+                } else {
+                    errorMessage = "Credenciais inválidas"
+                }
+            } catch (e: Exception) {
+                errorMessage = "Erro de conexão: ${e.message}"
+            } finally {
+                isLoading = false
             }
         }
     }

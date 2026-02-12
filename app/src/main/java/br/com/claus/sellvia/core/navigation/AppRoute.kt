@@ -32,3 +32,7 @@ object HomeRoute : MainNavRoute
 
 @Serializable
 object ProductRoute: MainNavRoute
+
+
+@Serializable
+object CategoryRoute: MainNavRoute

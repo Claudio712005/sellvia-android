@@ -1,6 +1,7 @@
 package br.com.claus.sellvia
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import br.com.claus.sellvia.core.di.module.loginmodule
 import br.com.claus.sellvia.core.di.module.networkModule
 import org.koin.android.ext.koin.androidContext

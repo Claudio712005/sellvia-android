@@ -17,9 +17,15 @@ enum class NavigationItem(
         route = HomeRoute
     ),
 
-    PRODUTOS(
+    PRODUCTS(
         title = "Produtos",
         icon = Icons.Outlined.AddBusiness,
         route = ProductRoute
+    ),
+
+    CATEGORIES(
+        title = "Categorias",
+        icon = Icons.Outlined.AddBusiness,
+        route = CategoryRoute
     )
 }

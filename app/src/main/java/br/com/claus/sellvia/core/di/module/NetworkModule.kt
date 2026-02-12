@@ -9,9 +9,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 val networkModule = module {
+
     single {
         val logging = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            level =
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         }
 
         OkHttpClient.Builder()
@@ -23,9 +25,9 @@ val networkModule = module {
     }
 
     single {
+        val apiSuffix = "api/v1.0.0/"
         Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .client(get())
+            .baseUrl("${BuildConfig.BASE_URL}$apiSuffix").client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

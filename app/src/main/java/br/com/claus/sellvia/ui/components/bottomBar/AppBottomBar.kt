@@ -34,7 +34,7 @@ fun AppBottomBar(
     val currentRoute = backStackEntry.value?.destination?.route
 
     NavigationBar(
-        containerColor = LightBackground,
+        containerColor = LightBackground.copy(alpha = 0.95f),
         tonalElevation = 0.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
