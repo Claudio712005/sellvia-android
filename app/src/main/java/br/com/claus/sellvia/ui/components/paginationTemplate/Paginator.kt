@@ -1,5 +1,14 @@
 package br.com.claus.sellvia.ui.components.paginationTemplate
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +21,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import br.com.claus.sellvia.ui.components.paginationTemplate.models.Pagination
@@ -24,6 +34,7 @@ fun <T> Paginator(
     modifier: Modifier = Modifier,
     paginationResponse: Pagination<T>,
     isLoading: Boolean = false,
+    keySelector: (T) -> Any,
     sortOptions: List<SortOption>,
     selectedSort: SortOption,
     onSortChange: (SortOption) -> Unit,
@@ -66,16 +77,29 @@ fun <T> Paginator(
                     }
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        bottom = 16.dp + bottomBarPadding,
-                        top = 8.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(paginationResponse.items) { item ->
-                        itemContent(item)
+                AnimatedContent (
+                    targetState = paginationResponse.items,
+                    transitionSpec = {
+                        fadeIn() + slideInVertically { it / 4 } togetherWith
+                                fadeOut() + slideOutVertically { -it / 4 }
+                    },
+                    label = ""
+                ) { animatedList ->
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            bottom = 16.dp + bottomBarPadding,
+                            top = 8.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = animatedList,
+                            key = keySelector
+                        ) { item ->
+                            itemContent(item)
+                        }
                     }
                 }
             }

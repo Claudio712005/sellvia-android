@@ -45,7 +45,8 @@ fun ListCategoryScreen(
         onSortChange = { viewModel.updateSort(it) },
         onPageChange = { viewModel.fetchCategories(it) },
         onRefresh = { viewModel.fetchCategories(0) },
-        itemContent = { CategoryItem(it) }
+        itemContent = { CategoryItem(it) },
+        keySelector = { it.id ?: error("Category must have an ID") }
     )
 }
 
