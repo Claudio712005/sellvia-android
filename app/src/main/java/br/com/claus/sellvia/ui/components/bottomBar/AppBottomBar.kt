@@ -11,12 +11,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import br.com.claus.sellvia.core.navigation.NavigationItem
@@ -30,8 +32,8 @@ import br.com.claus.sellvia.ui.theme.SellviaTertiary
 fun AppBottomBar(
     navController: NavHostController
 ) {
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
 
     NavigationBar(
         containerColor = LightBackground.copy(alpha = 0.95f),
@@ -45,8 +47,11 @@ fun AppBottomBar(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             NavigationItem.entries.forEach { item ->
-                val selected = currentRoute == item.route::class.qualifiedName
+
+                val selected =
+                    currentDestination?.hasRoute(item.route::class) == true
 
                 val backgroundColor = if (selected) {
                     SellviaPrimary.copy(alpha = 0.15f)
@@ -61,11 +66,10 @@ fun AppBottomBar(
                         .clip(MaterialTheme.shapes.extraLarge)
                         .background(backgroundColor)
                         .clickable {
-                            navController.navigate(item.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                            if (!selected) {
+                                navController.navigate(item.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
                             }
                         },
@@ -75,14 +79,17 @@ fun AppBottomBar(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.title,
-                        tint = if (selected) SellviaPrimary else SellviaPrimaryDark.copy(alpha = 0.6f),
+                        tint = if (selected)
+                            SellviaPrimary
+                        else
+                            SellviaPrimaryDark.copy(alpha = 0.6f),
                         modifier = Modifier
                             .height(24.dp)
                             .width(24.dp)
                     )
-
                 }
             }
         }
     }
 }
+

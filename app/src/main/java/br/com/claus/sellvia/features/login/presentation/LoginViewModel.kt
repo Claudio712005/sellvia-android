@@ -30,7 +30,9 @@ class LoginViewModel (
 
                     tokenManager.saveTokens(
                         token = loginData.token,
-                        refreshToken = loginData.refreshToken
+                        refreshToken = loginData.refreshToken,
+                        companyId = loginData.company.id,
+                        userId = loginData.user.id,
                     )
 
                     onSuccess()
