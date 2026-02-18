@@ -48,7 +48,7 @@ fun AppBottomBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            NavigationItem.entries.forEach { item ->
+            NavigationItem.entries.filter { it.visibleInBottomBar }.forEach { item ->
 
                 val selected =
                     currentDestination?.hasRoute(item.route::class) == true

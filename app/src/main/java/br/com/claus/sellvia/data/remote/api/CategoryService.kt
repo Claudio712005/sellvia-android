@@ -20,17 +20,20 @@ interface CategoryService {
 
     @POST("categories")
     suspend fun createCategory(
-        @Body request: CategoryRequest
+        @Body request: CategoryRequest,
+        @Header("Authorization") token: String
     ): Response<Unit>
 
     @PUT("categories/{id}")
     suspend fun updateCategory(
         @Path("id") id: Long,
-        @Body request: CategoryRequest
-    ): CategoryResponse
+        @Body request: CategoryRequest,
+        @Header("Authorization") token: String
+    ): Response<CategoryResponse>
 
     @DELETE("categories/{id}")
     suspend fun deleteCategory(
-        @Path("id") id: Long
+        @Path("id") id: Long,
+        @Header("Authorization") token: String
     ): Response<Unit>
 }

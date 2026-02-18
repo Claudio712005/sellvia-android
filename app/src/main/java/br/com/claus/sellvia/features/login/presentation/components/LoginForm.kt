@@ -15,12 +15,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import br.com.claus.sellvia.ui.theme.SellviaPrimary
 
 @Composable
 fun LoginForm(
-    email: String,
+    username: String,
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
@@ -35,15 +34,15 @@ fun LoginForm(
     ) {
         Column {
             Text(
-                text = "E-mail",
+                text = "Username",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 6.dp)
             )
             OutlinedTextField(
-                value = email,
+                value = username,
                 onValueChange = onEmailChange,
-                placeholder = { Text("Digite seu e-mail", color = Color.LightGray) },
+                placeholder = { Text("Digite seu username", color = Color.LightGray) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,

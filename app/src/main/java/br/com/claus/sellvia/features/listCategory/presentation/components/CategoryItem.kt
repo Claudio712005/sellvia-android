@@ -40,14 +40,15 @@ import br.com.claus.sellvia.ui.theme.SellviaPrimary
 import br.com.claus.sellvia.ui.theme.SellviaTertiary
 
 @Composable
-fun CategoryItem(category: CategoryResponse) {
+fun CategoryItem(category: CategoryResponse, onSelect: (CategoryResponse) -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = LightSurface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        onClick = { onSelect(category) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.Top) {

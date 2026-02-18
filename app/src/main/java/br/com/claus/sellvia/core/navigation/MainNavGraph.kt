@@ -24,6 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -31,7 +34,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.com.claus.sellvia.features.home.presentation.HomeScreen
-import br.com.claus.sellvia.features.listCategory.presentation.ListCategoryScreen
+import br.com.claus.sellvia.features.listCategory.presentation.ListCategoryWithRegistry
+import br.com.claus.sellvia.features.listCategory.presentation.components.ListCategoryFloatActionButton
 
 @SuppressLint("RestrictedApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +50,8 @@ fun MainScaffoldNavGraph(
     val currentTitle = NavigationItem.entries.find { item ->
         navBackStackEntry?.destination?.hasRoute(item.route::class) == true
     }?.title ?: "Sellvia"
+
+    var openCategoryModal by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -70,24 +76,10 @@ fun MainScaffoldNavGraph(
                 )
             )
         },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = navBackStackEntry?.destination?.hasRoute(CategoryRoute::class) == true,
-                enter = fadeIn(animationSpec = tween(220)) +
-                        scaleIn(
-                            initialScale = 0.8f,
-                            animationSpec = spring(dampingRatio = 0.7f)
-                        ),
-                exit = fadeOut(animationSpec = tween(150)) +
-                        scaleOut(targetScale = 0.8f)
-            ) {
-                FloatingActionButton(
-                    onClick = { }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Adicionar categoria"
-                    )
+        floatingActionButton = @Composable {
+            if (navBackStackEntry?.destination?.hasRoute(CategoryRoute::class) == true) {
+                ListCategoryFloatActionButton {
+                    openCategoryModal = true
                 }
             }
         },
@@ -102,8 +94,11 @@ fun MainScaffoldNavGraph(
                 HomeScreen()
             }
             composable<CategoryRoute>{
-                ListCategoryScreen(
-                    bottomBarPadding = padding.calculateBottomPadding()
+                ListCategoryWithRegistry(
+                    bottomBarPadding = padding.calculateBottomPadding(),
+                    showModal = openCategoryModal,
+                    openModal = { openCategoryModal = true },
+                    onModalDismiss = { openCategoryModal = false }
                 )
             }
         }

@@ -17,7 +17,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import br.com.claus.sellvia.R
 import br.com.claus.sellvia.features.login.presentation.components.LoginForm
 import br.com.claus.sellvia.ui.components.buttons.SellviaPrimaryButton
@@ -25,8 +24,6 @@ import br.com.claus.sellvia.ui.theme.SellviaPrimary
 import br.com.claus.sellvia.ui.theme.SellviaTheme
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.Image
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Lock
 
 @Composable
 fun LoginScreenContent(
@@ -71,8 +68,8 @@ fun LoginScreenContent(
             Spacer(modifier = Modifier.height(32.dp))
 
             LoginForm(
-                email = viewModel.email,
-                onEmailChange = { viewModel.email = it },
+                username = viewModel.username,
+                onEmailChange = { viewModel.username = it },
                 password = viewModel.password,
                 onPasswordChange = { viewModel.password = it }
             )

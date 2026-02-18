@@ -1,6 +1,7 @@
 package br.com.claus.sellvia
 
 import android.app.Application
+import br.com.claus.sellvia.core.di.module.actionsCategoryModule
 import br.com.claus.sellvia.core.di.module.listCategoryModule
 import br.com.claus.sellvia.core.di.module.loginModule
 import br.com.claus.sellvia.core.di.module.networkModule
@@ -14,7 +15,7 @@ class SellviaApplication : Application() {
 
         startKoin {
             androidContext(this@SellviaApplication)
-            modules(networkModule, loginModule, listCategoryModule)
+            modules(networkModule, loginModule, listCategoryModule, actionsCategoryModule)
         }
     }
 }

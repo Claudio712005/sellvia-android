@@ -12,7 +12,7 @@ class LoginViewModel (
     private val tokenManager: TokenManager
 ): ViewModel(){
 
-    var email by mutableStateOf("")
+    var username by mutableStateOf("")
     var password by mutableStateOf("")
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
@@ -22,7 +22,7 @@ class LoginViewModel (
             isLoading = true
             errorMessage = null
             try {
-                val response = repository.login(email, password)
+                val response = repository.login(username, password)
                 onSuccess()
 
                 if (response.isSuccessful && response.body() != null) {
