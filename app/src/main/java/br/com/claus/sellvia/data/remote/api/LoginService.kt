@@ -12,6 +12,6 @@ interface LoginService {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
-    @POST("/auth/refresh-token")
+    @POST("auth/refresh-token")
     fun refreshToken(@Header("Authorization") token: String): Call<LoginResponse>
 }

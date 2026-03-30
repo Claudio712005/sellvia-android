@@ -36,6 +36,8 @@ import androidx.navigation.compose.rememberNavController
 import br.com.claus.sellvia.features.home.presentation.HomeScreen
 import br.com.claus.sellvia.features.listCategory.presentation.ListCategoryWithRegistry
 import br.com.claus.sellvia.features.listCategory.presentation.components.ListCategoryFloatActionButton
+import br.com.claus.sellvia.features.listProduct.presentation.ListProductScreen
+import br.com.claus.sellvia.features.registryProduct.presentation.RegistryProductScreen
 
 @SuppressLint("RestrictedApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,6 +101,16 @@ fun MainScaffoldNavGraph(
                     showModal = openCategoryModal,
                     openModal = { openCategoryModal = true },
                     onModalDismiss = { openCategoryModal = false }
+                )
+            }
+            composable<ProductRoute> {
+                ListProductScreen(
+                    bottomBarPadding = padding.calculateBottomPadding(),
+                )
+            }
+            composable<RegistryProductRoute> {
+                RegistryProductScreen(
+                    bottomBarPadding = padding.calculateBottomPadding(),
                 )
             }
         }

@@ -9,7 +9,7 @@ import br.com.claus.sellvia.data.remote.model.parseErrorBody
 import br.com.claus.sellvia.data.remote.model.request.CategoryRequest
 import br.com.claus.sellvia.data.remote.model.response.CategoryResponse
 import br.com.claus.sellvia.features.listCategory.data.ListCategoryRepository
-import br.com.claus.sellvia.features.listCategory.presentation.CategoryFormState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import kotlin.coroutines.cancellation.CancellationException
 
 class ActionsCategoryViewModel(
     private val tokenManager: TokenManager,

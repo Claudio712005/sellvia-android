@@ -2,6 +2,7 @@ package br.com.claus.sellvia.core.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddBusiness
+import androidx.compose.material.icons.outlined.AddShoppingCart
 import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -17,6 +18,12 @@ enum class NavigationItem(
         title = "Home",
         icon = Icons.Outlined.Home,
         route = HomeRoute
+    ),
+
+    REGISTRY_PRODUCT(
+        title = "Registrar Produto",
+        icon = Icons.Outlined.AddShoppingCart,
+        route = RegistryProductRoute,
     ),
 
     PRODUCTS(
