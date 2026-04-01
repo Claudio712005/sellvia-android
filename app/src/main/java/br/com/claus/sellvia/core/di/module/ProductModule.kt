@@ -4,6 +4,7 @@ import br.com.claus.sellvia.core.data.storage.TokenManager
 import br.com.claus.sellvia.data.remote.api.ProductService
 import br.com.claus.sellvia.features.listProduct.data.ListProductRepository
 import br.com.claus.sellvia.features.listProduct.presentation.ListProductsViewModel
+import br.com.claus.sellvia.features.registryProduct.data.RegistryProductRepository
 import br.com.claus.sellvia.features.registryProduct.presentation.RegistryProductViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -19,5 +20,11 @@ val listProductModule = module {
 
 val registryProductModule = module {
     single { TokenManager(androidContext()) }
-    viewModel { RegistryProductViewModel(get()) }
+    single {
+        RegistryProductRepository(
+            api = get<Retrofit>().create(ProductService::class.java),
+            context = androidContext()
+        )
+    }
+    viewModel { RegistryProductViewModel(get(), get()) }
 }

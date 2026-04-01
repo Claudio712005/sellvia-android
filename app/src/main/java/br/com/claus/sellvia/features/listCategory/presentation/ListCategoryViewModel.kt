@@ -42,6 +42,14 @@ class ListCategoryViewModel(
     private val _currentPage = MutableStateFlow(0)
     val currentPage = _currentPage.asStateFlow()
 
+    private val _nameFilter = MutableStateFlow("")
+    val nameFilter = _nameFilter.asStateFlow()
+
+    fun updateNameFilter(name: String) {
+        _nameFilter.value = name
+        fetchCategories(page = 0)
+    }
+
     init {
         fetchCategories()
     }
@@ -65,7 +73,8 @@ class ListCategoryViewModel(
                     perPage = 10,
                     sort = sortField,
                     sortDirection = sortDirection,
-                    companyId = companyId
+                    companyId = companyId,
+//                    name = _nameFilter.value.ifBlank { null }
                 )
 
                 _uiState.value = _uiState.value.copy(

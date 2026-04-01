@@ -35,7 +35,8 @@ fun StepTwoContent(
                 label = "Preço",
                 placeholder = "Ex: 99.90",
                 leadingIcon = Icons.Outlined.AttachMoney,
-                singleLine = true
+                singleLine = true,
+                error = uiState.fieldErrors.price
             )
         }
 
@@ -49,7 +50,8 @@ fun StepTwoContent(
                 placeholder = "Ex: 40.00",
                 leadingIcon = Icons.Outlined.MoneyOff,
                 singleLine = true,
-                supportingText = "Quanto custa produzir ou adquirir este produto"
+                supportingText = "Quanto custa produzir ou adquirir este produto",
+                error = uiState.fieldErrors.productionCost
             )
         }
 

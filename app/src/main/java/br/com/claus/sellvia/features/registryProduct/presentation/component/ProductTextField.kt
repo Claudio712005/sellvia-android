@@ -24,7 +24,8 @@ fun ProductTextField(
     modifier: Modifier = Modifier,
     minLines: Int = 1,
     maxLines: Int = 1,
-    supportingText: String? = null
+    supportingText: String? = null,
+    error: String? = null
 ) {
     OutlinedTextField(
         value = value,
@@ -45,9 +46,20 @@ fun ProductTextField(
                 modifier = Modifier.size(20.dp)
             )
         },
-        supportingText = if (supportingText != null) {
-            { Text(supportingText, style = MaterialTheme.typography.labelSmall) }
-        } else null,
+        supportingText =
+            if (error != null) {
+                {
+                    Text(
+                        error,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                if (supportingText != null) {
+                    { Text(supportingText, style = MaterialTheme.typography.labelSmall) }
+                } else null
+            },
         singleLine = singleLine,
         minLines = minLines,
         maxLines = maxLines,

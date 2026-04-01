@@ -49,7 +49,8 @@ fun StepThreeContent(
                     label = "Quantidade",
                     placeholder = "Ex: 100",
                     leadingIcon = Icons.Outlined.Inventory,
-                    singleLine = true
+                    singleLine = true,
+                    error = uiState.fieldErrors.stockQuantity
                 )
             }
         }

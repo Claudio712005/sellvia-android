@@ -15,5 +15,5 @@ data class ProductRequest(
     val categoryId: Long? = null,
     val sku: String,
     val stockQuantity: Int? = null,
-    val type: ProductType = ProductType.PHYSICAL
+    val type: ProductType = ProductType.PHYSICAL,
 )

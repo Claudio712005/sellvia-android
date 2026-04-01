@@ -1,5 +1,8 @@
 package br.com.claus.sellvia.features.registryProduct.presentation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -8,37 +11,23 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AddPhotoAlternate
-import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Inventory
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material.icons.outlined.QrCode
-import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -53,13 +42,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import br.com.claus.sellvia.features.listCategory.presentation.ListCategoryViewModel
 import br.com.claus.sellvia.features.registryProduct.presentation.component.PlaceholderStep
 import br.com.claus.sellvia.features.registryProduct.presentation.component.ProductStepper
 import br.com.claus.sellvia.features.registryProduct.presentation.component.StepOneContent
-import br.com.claus.sellvia.features.registryProduct.presentation.component.StepSectionLabel
 import br.com.claus.sellvia.features.registryProduct.presentation.component.StepThreeContent
 import br.com.claus.sellvia.features.registryProduct.presentation.component.StepTwoContent
 import br.com.claus.sellvia.features.registryProduct.presentation.component.StepperNavigation
+import br.com.claus.sellvia.features.registryProduct.presentation.component.SubmitResultDialog
 import org.koin.androidx.compose.koinViewModel
 
 data class StepperItem(
@@ -77,12 +67,38 @@ val registrySteps = listOf(
 fun RegistryProductScreen(
     bottomBarPadding: Dp = 0.dp,
     modifier: Modifier = Modifier,
-    viewModel: RegistryProductViewModel = koinViewModel()
+    viewModel: RegistryProductViewModel = koinViewModel(),
+    onNavigateToList: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isEditing = uiState.data.id != null
-
     var currentStep by remember { mutableIntStateOf(0) }
+
+    val categoryViewModel: ListCategoryViewModel = koinViewModel()
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            viewModel.onImageSelected(uri)
+        }
+    }
+
+    uiState.submitResult?.let { result ->
+        SubmitResultDialog(
+            result = result,
+            onDismiss = { viewModel.dismissSubmitResult() },
+            onGoToList = {
+                viewModel.dismissSubmitResult()
+                onNavigateToList()
+            },
+            onRegisterNew = {
+                viewModel.dismissSubmitResult()
+                viewModel.resetForm()
+                currentStep = 0
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -125,18 +141,28 @@ fun RegistryProductScreen(
                     onNameChange = { viewModel.onNameChange(it) },
                     onDescriptionChange = { viewModel.onDescriptionChange(it) },
                     onSkuChange = { viewModel.onSkuChange(it) },
-                    onImageClick = { viewModel.onImageClick() }
+                    onImageClick = {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
+                    onImageRemove = { viewModel.onImageSelected(null) },
+                    onCategorySelected = { viewModel.onCategorySelected(it) },
+                    categoryViewModel = categoryViewModel
                 )
+
                 1 -> StepTwoContent(
                     uiState = uiState,
                     onPriceChange = viewModel::onPriceChange,
                     onCostChange = viewModel::onCostChange
                 )
+
                 2 -> StepThreeContent(
                     uiState = uiState,
                     onStockControlChange = viewModel::onStockControlChange,
                     onStockChange = viewModel::onStockChange
                 )
+
                 else -> PlaceholderStep(step = step + 1)
             }
         }
@@ -145,8 +171,14 @@ fun RegistryProductScreen(
             currentStep = currentStep,
             totalSteps = registrySteps.size,
             onBack = { if (currentStep > 0) currentStep-- },
-            onNext = { if (currentStep < registrySteps.size - 1) currentStep++ },
-            onFinish = { },
+            onNext = {
+                if (viewModel.validateStep(currentStep)) {
+                    if (currentStep < registrySteps.size - 1) currentStep++
+                }
+            },
+            onFinish = {
+                if (viewModel.validateStep(currentStep)) viewModel.submit()
+            },
             modifier = Modifier.padding(horizontal = 24.dp)
         )
     }

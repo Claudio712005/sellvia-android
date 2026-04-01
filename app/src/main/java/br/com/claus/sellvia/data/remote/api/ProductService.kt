@@ -3,8 +3,14 @@ package br.com.claus.sellvia.data.remote.api
 import br.com.claus.sellvia.data.enums.Direction
 import br.com.claus.sellvia.data.remote.model.response.ProductResponse
 import br.com.claus.sellvia.ui.components.paginationTemplate.models.Pagination
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface ProductService {
@@ -32,4 +38,11 @@ interface ProductService {
         @Query("sku") sku: String?
     ): Pagination<ProductResponse>
 
+    @Multipart
+    @POST("products")
+    suspend fun create(
+        @Header("Authorization") token: String,
+        @Part("data") data: RequestBody,
+        @Part image: MultipartBody.Part
+    ): Response<Unit>
 }

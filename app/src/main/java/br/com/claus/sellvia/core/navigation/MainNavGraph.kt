@@ -111,6 +111,11 @@ fun MainScaffoldNavGraph(
             composable<RegistryProductRoute> {
                 RegistryProductScreen(
                     bottomBarPadding = padding.calculateBottomPadding(),
+                    onNavigateToList = {
+                        navController.navigate(ProductRoute) {
+                            popUpTo<RegistryProductRoute> { inclusive = true }
+                        }
+                    }
                 )
             }
         }
