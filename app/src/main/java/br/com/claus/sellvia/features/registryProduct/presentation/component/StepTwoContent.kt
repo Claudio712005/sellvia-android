@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material.icons.outlined.MoneyOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import br.com.claus.sellvia.data.utils.formatDouble
 import br.com.claus.sellvia.features.registryProduct.presentation.RegistryProductUiState
@@ -34,6 +35,7 @@ fun StepTwoContent(
                 onValueChange = onPriceChange,
                 label = "Preço",
                 placeholder = "Ex: 99.90",
+                keyboardType = KeyboardType.Number,
                 leadingIcon = Icons.Outlined.AttachMoney,
                 singleLine = true,
                 error = uiState.fieldErrors.price
@@ -50,6 +52,7 @@ fun StepTwoContent(
                 placeholder = "Ex: 40.00",
                 leadingIcon = Icons.Outlined.MoneyOff,
                 singleLine = true,
+                keyboardType = KeyboardType.Number,
                 supportingText = "Quanto custa produzir ou adquirir este produto",
                 error = uiState.fieldErrors.productionCost
             )

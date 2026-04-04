@@ -15,7 +15,8 @@ interface CategoryService {
         @Query("pageSize") pageSize: Int = 10,
         @Query("sortBy") sortBy: String = "id",
         @Query("sortDirection") sortDirection: String = "ASC",
-        @Query("companyId") companyId: Long?
+        @Query("companyId") companyId: Long?,
+        @Query("name") name: String?
     ): Pagination<CategoryResponse>
 
     @POST("categories")

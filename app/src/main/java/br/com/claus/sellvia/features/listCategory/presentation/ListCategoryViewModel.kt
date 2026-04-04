@@ -74,7 +74,7 @@ class ListCategoryViewModel(
                     sort = sortField,
                     sortDirection = sortDirection,
                     companyId = companyId,
-//                    name = _nameFilter.value.ifBlank { null }
+                    name = _nameFilter.value.ifBlank { null }
                 )
 
                 _uiState.value = _uiState.value.copy(

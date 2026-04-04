@@ -3,6 +3,7 @@ package br.com.claus.sellvia.features.registryProduct.presentation.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -25,7 +27,8 @@ fun ProductTextField(
     minLines: Int = 1,
     maxLines: Int = 1,
     supportingText: String? = null,
-    error: String? = null
+    error: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     OutlinedTextField(
         value = value,
@@ -72,6 +75,7 @@ fun ProductTextField(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface
         ),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
     )
 }

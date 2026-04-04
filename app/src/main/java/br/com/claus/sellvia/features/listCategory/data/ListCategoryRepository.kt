@@ -14,14 +14,16 @@ class ListCategoryRepository(
         perPage: Int,
         sort: String,
         sortDirection: Direction,
-        companyId: Long?
+        companyId: Long?,
+        name: String?
     ) = api.getCategories(
         token = "Bearer $token",
         page = page,
         pageSize = perPage,
         sortBy = sort,
         sortDirection = sortDirection.name,
-        companyId = companyId
+        companyId = companyId,
+        name = name
     )
 
     suspend fun registry(

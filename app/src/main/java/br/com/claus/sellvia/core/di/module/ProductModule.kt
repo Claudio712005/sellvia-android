@@ -26,5 +26,5 @@ val registryProductModule = module {
             context = androidContext()
         )
     }
-    viewModel { RegistryProductViewModel(get(), get()) }
+    viewModel { RegistryProductViewModel(get(), get(), get()) }
 }

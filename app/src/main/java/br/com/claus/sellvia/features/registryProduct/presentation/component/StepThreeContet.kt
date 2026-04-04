@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inventory
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import br.com.claus.sellvia.features.registryProduct.presentation.RegistryProductUiState
 
@@ -47,6 +48,7 @@ fun StepThreeContent(
                     value = uiState.data.stockQuantity?.toString() ?: "",
                     onValueChange = onStockChange,
                     label = "Quantidade",
+                    keyboardType = KeyboardType.Number,
                     placeholder = "Ex: 100",
                     leadingIcon = Icons.Outlined.Inventory,
                     singleLine = true,

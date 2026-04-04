@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.claus.sellvia.core.data.storage.TokenManager
+import br.com.claus.sellvia.core.presentation.LoadingViewModel
 import br.com.claus.sellvia.data.remote.model.request.ProductRequest
 import br.com.claus.sellvia.data.remote.model.response.CategoryResponse
 import br.com.claus.sellvia.features.registryProduct.data.RegistryProductRepository
@@ -30,7 +31,6 @@ data class RegistryProductFieldErrors(
 )
 
 data class RegistryProductUiState(
-    val isLoading: Boolean = false,
     val error: String? = null,
     val fieldErrors: RegistryProductFieldErrors = RegistryProductFieldErrors(),
     val localImageUri: Uri? = null,
@@ -48,7 +48,8 @@ data class RegistryProductUiState(
 
 class RegistryProductViewModel(
     private val tokenManager: TokenManager,
-    private val repository: RegistryProductRepository
+    private val repository: RegistryProductRepository,
+    private val loadingViewModel: LoadingViewModel
 ) : ViewModel() {
 
     fun submit() {
@@ -63,12 +64,12 @@ class RegistryProductViewModel(
         }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            loadingViewModel.show()
 
             val token = tokenManager.accessToken.firstOrNull()
                 ?: throw Exception("Token de acesso não encontrado")
 
-            if(state.data.companyId == 0L) {
+            if (state.data.companyId == 0L) {
                 val companyId = tokenManager.companyId().firstOrNull()
                     ?: throw Exception("ID da empresa não encontrado")
                 _uiState.update { it.copy(data = it.data.copy(companyId = companyId)) }
@@ -80,14 +81,15 @@ class RegistryProductViewModel(
                 token = token
             ).fold(
                 onSuccess = {
+                    loadingViewModel.hide()
                     _uiState.update {
-                        it.copy(isLoading = false, submitResult = SubmitResult.Success)
+                        it.copy(submitResult = SubmitResult.Success)
                     }
                 },
                 onFailure = { e ->
+                    loadingViewModel.hide()
                     _uiState.update {
                         it.copy(
-                            isLoading = false,
                             submitResult = SubmitResult.Error(e.message ?: "Erro ao salvar produto")
                         )
                     }
@@ -95,6 +97,8 @@ class RegistryProductViewModel(
             )
         }
     }
+
+    fun isLoading(): StateFlow<Boolean> = loadingViewModel.isLoading
 
     fun dismissSubmitResult() {
         _uiState.update { it.copy(submitResult = null) }
@@ -116,7 +120,7 @@ class RegistryProductViewModel(
     fun onSkuChange(sku: String) {
         _uiState.update {
             it.copy(
-                data = it.data.copy(sku = sku),
+                data = it.data.copy(sku = sku.uppercase()),
                 fieldErrors = it.fieldErrors.copy(sku = null)
             )
         }

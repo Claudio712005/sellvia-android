@@ -184,6 +184,7 @@ fun StepperNavigation(
     onBack: () -> Unit,
     onNext: () -> Unit,
     onFinish: () -> Unit,
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val isLastStep = currentStep == totalSteps - 1
@@ -195,6 +196,7 @@ fun StepperNavigation(
         AnimatedVisibility(visible = currentStep > 0) {
             Button(
                 onClick = onBack,
+                enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
                     contentColor = MaterialTheme.colorScheme.primary
@@ -210,6 +212,7 @@ fun StepperNavigation(
 
         Button(
             onClick = if (isLastStep) onFinish else onNext,
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
