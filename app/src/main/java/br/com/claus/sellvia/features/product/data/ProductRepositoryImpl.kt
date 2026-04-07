@@ -61,4 +61,12 @@ class ProductRepositoryImpl(
 
         return safeApiCall { service.create(data = dataBody, image = imagePart) }
     }
+
+    override suspend fun update(request: ProductRequest, id: Long): ResultWrapper<Product> {
+        return safeApiCall { service.update(request, id) }.mapSuccess { it.toDomain() }
+    }
+
+    override suspend fun delete(id: Long): ResultWrapper<Unit> {
+        return safeApiCall { service.delete(id) }
+    }
 }

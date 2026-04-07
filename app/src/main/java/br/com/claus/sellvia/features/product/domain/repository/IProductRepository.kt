@@ -12,4 +12,8 @@ interface IProductRepository {
     suspend fun findAll(query: ProductSearchQuery): ResultWrapper<Pagination<Product>>
 
     suspend fun create(request: ProductRequest, imageUri: Uri): ResultWrapper<Unit>
+
+    suspend fun update(request: ProductRequest, id: Long): ResultWrapper<Product>
+
+    suspend fun delete(id: Long): ResultWrapper<Unit>
 }

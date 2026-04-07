@@ -10,7 +10,8 @@ suspend fun <T> safeApiCall(call: suspend () -> Response<T>): ResultWrapper<T> {
     return try {
         val response = call()
         if (response.isSuccessful) {
-            ResultWrapper.Success(response.body()!!)
+            @Suppress("UNCHECKED_CAST")
+            ResultWrapper.Success(response.body() ?: Unit as T)
         } else {
             val message = ApiErrorResponse.parseErrorBody(response.errorBody())
             ResultWrapper.Error(code = response.code(), message = message)
