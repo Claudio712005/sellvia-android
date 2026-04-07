@@ -18,8 +18,8 @@ class SellviaApplication : Application() {
 
         startKoin {
             androidContext(this@SellviaApplication)
-            modules(networkModule, loginModule, listCategoryModule, actionsCategoryModule,
-                listProductModule, registryProductModule, coreModule
+            modules(coreModule, networkModule, loginModule, listCategoryModule, actionsCategoryModule,
+                listProductModule, registryProductModule
             )
         }
     }

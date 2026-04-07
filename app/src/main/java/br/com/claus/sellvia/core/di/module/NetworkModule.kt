@@ -1,9 +1,9 @@
 package br.com.claus.sellvia.core.di.module
 
 import br.com.claus.sellvia.BuildConfig
-import br.com.claus.sellvia.data.remote.api.AuthInterceptor
-import br.com.claus.sellvia.data.remote.api.LoginService
-import br.com.claus.sellvia.data.remote.api.TokenAuthenticator
+import br.com.claus.sellvia.core.network.AuthInterceptor
+import br.com.claus.sellvia.features.login.data.LoginService
+import br.com.claus.sellvia.core.network.TokenAuthenticator
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
