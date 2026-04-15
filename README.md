@@ -213,3 +213,4 @@ Consulte o arquivo [LICENSE](LICENSE) para os termos completos.
 Desenvolvido por **Cláudio da Silva Araújo Filho Araujo** como parte do portfólio profissional de desenvolvimento Android.
 
 Contato e perfil profissional disponíveis via GitHub: [@Claudio712005](https://github.com/Claudio712005)
+Contato e perfil profissional disponíveis via linkedin: [@Cláudio da Silva Araújo Filho](https://www.linkedin.com/in/claudiodesenvolvedorjava/)
