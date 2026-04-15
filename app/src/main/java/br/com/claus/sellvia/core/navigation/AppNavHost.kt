@@ -1,46 +1,58 @@
 package br.com.claus.sellvia.core.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.com.claus.sellvia.features.home.presentation.HomeScreen
-import br.com.claus.sellvia.features.login.presentation.LoginScreenContent
-import br.com.claus.sellvia.features.splash.presentation.SplashScreen
+import br.com.claus.sellvia.core.data.storage.SessionGuard
+import br.com.claus.sellvia.core.data.storage.TokenManager
+import kotlinx.coroutines.flow.firstOrNull
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost(tokenManager: TokenManager) {
     val navController = rememberNavController()
+
+    val tokenState by tokenManager.accessToken.collectAsState(initial = "loading")
+
+    if (tokenState == "loading") return
+
+    LaunchedEffect(tokenState) {
+        if (SessionGuard.sessionActive) return@LaunchedEffect
+
+        val keepLoggedIn = tokenManager.keepLoggedIn().firstOrNull() ?: true
+        if (!keepLoggedIn && tokenState != null) {
+            tokenManager.clearTokens()
+        }
+
+        SessionGuard.sessionActive = true
+    }
+
+    val startDest = if (tokenState != null) "main_graph" else "auth_graph"
 
     NavHost(
         navController = navController,
-        startDestination = "splash"
+        startDestination = startDest
     ) {
-
-        composable("splash") {
-            SplashScreen(
-                onFinished = {
-                    navController.navigate("login") {
-                        popUpTo("splash") { inclusive = true }
+        composable("auth_graph") {
+            AuthNavGraph(
+                onAuthSuccess = {
+                    navController.navigate("main_graph") {
+                        popUpTo("auth_graph") { inclusive = true }
                     }
                 }
             )
         }
 
-        composable("login") {
-/*            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                }
-            )*/
-            LoginScreenContent()
+        composable("main_graph") {
+            MainScaffoldNavGraph()
         }
+    }
 
-        composable("home") {
-            HomeScreen()
+    LaunchedEffect(tokenState) {
+        if (tokenState == null) {
+            navController.navigate("auth_graph") {
+                popUpTo(0) { inclusive = true }
+            }
         }
     }
 }
