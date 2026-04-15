@@ -151,7 +151,9 @@ fun RegistryProductScreen(
                     },
                     onImageRemove = { viewModel.onImageSelected(null) },
                     onCategorySelected = { viewModel.onCategorySelected(it) },
-                    categoryViewModel = categoryViewModel
+                    categoryViewModel = categoryViewModel,
+                    onExternalLinkChange = { viewModel.onExternalLinkChange(it) },
+                    onWhatsappMessageChange = { viewModel.onWhatsappMessageChange(it) },
                 )
 
                 1 -> StepTwoContent(

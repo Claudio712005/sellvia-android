@@ -65,7 +65,6 @@ fun SubmitResultDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-                // Ícone animado
                 AnimatedVisibility(
                     visible = true,
                     enter = scaleIn(spring(Spring.DampingRatioMediumBouncy)) + fadeIn()
@@ -110,7 +109,6 @@ fun SubmitResultDialog(
                 Spacer(Modifier.height(28.dp))
 
                 if (isSuccess) {
-                    // Dois botões lado a lado
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)

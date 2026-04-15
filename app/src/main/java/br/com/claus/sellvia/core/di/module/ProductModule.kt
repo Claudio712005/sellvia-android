@@ -8,6 +8,7 @@ import br.com.claus.sellvia.features.product.domain.usecase.CreateProductUseCase
 import br.com.claus.sellvia.features.product.domain.usecase.DeleteProductUseCase
 import br.com.claus.sellvia.features.product.domain.usecase.GetProductsUseCase
 import br.com.claus.sellvia.features.product.domain.usecase.UpdateProductUseCase
+import br.com.claus.sellvia.features.product.domain.usecase.UpdateProductImageUseCase
 import br.com.claus.sellvia.features.product.presentation.RegistryProductViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -22,8 +23,9 @@ val listProductModule = module {
     factory { CreateProductUseCase(get()) }
     factory { DeleteProductUseCase(get()) }
     factory { UpdateProductUseCase(get()) }
+    factory { UpdateProductImageUseCase(get()) }
 
-    viewModel { ListProductsViewModel(get(), get(), get(), get()) }
+    viewModel { ListProductsViewModel(androidContext(), get(), get(), get(), get(), get()) }
 }
 
 val registryProductModule = module {

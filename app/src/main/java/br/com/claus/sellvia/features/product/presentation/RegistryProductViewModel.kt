@@ -3,6 +3,7 @@ package br.com.claus.sellvia.features.product.presentation
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.claus.sellvia.core.data.storage.TokenManager
@@ -38,6 +39,7 @@ data class RegistryProductFieldErrors(
     val stockQuantity: String? = null,
     val productionCost: String? = null,
     val imageUrl: String? = null,
+    val externalLink: String? = null,
 )
 
 data class RegistryProductUiState(
@@ -235,6 +237,21 @@ class RegistryProductViewModel(
         }
     }
 
+    fun onExternalLinkChange(value: String) {
+        _uiState.update {
+            it.copy(
+                data = it.data.copy(externalLink = value.ifBlank { null }),
+                fieldErrors = it.fieldErrors.copy(externalLink = null)
+            )
+        }
+    }
+
+    fun onWhatsappMessageChange(value: String) {
+        _uiState.update {
+            it.copy(data = it.data.copy(whatsappMessage = value.ifBlank { null }))
+        }
+    }
+
     fun validateStep(step: Int): Boolean {
         val data = _uiState.value.data
         var errors = RegistryProductFieldErrors()
@@ -258,6 +275,15 @@ class RegistryProductViewModel(
                     errors =
                         errors.copy(description = "Descrição deve ter pelo menos 10 caracteres"); isValid =
                         false
+                }
+                if (!data.externalLink.isNullOrBlank()) {
+                    if (data.externalLink.length > 500) {
+                        errors = errors.copy(externalLink = "Link externo deve ter no máximo 500 caracteres")
+                        isValid = false
+                    } else if (!Patterns.WEB_URL.matcher(data.externalLink).matches()) {
+                        errors = errors.copy(externalLink = "Link externo inválido. Informe uma URL válida")
+                        isValid = false
+                    }
                 }
             }
 

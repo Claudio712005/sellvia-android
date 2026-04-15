@@ -100,7 +100,7 @@ fun CategoryItem(category: Category, onSelect: (Category) -> Unit = {}) {
             ) {
                 InfoBadge(
                     icon = Icons.Outlined.Person,
-                    text = category.createdBy ?: "Sistema"  // createdBy é nullable no domain model
+                    text = category.createdBy ?: "Sistema"  
                 )
 
                 category.createdAt?.let { date ->

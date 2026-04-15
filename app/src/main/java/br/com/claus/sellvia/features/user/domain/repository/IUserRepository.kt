@@ -1,16 +1,12 @@
 package br.com.claus.sellvia.features.user.domain.repository
 
-import br.com.claus.sellvia.features.user.data.model.UserRequest
-import br.com.claus.sellvia.features.user.data.model.UserResponse
+import br.com.claus.sellvia.core.network.ResultWrapper
+import br.com.claus.sellvia.features.user.data.model.UpdatePasswordRequest
+import br.com.claus.sellvia.features.user.domain.model.User
 
 interface IUserRepository {
 
-    fun getById(id: Long): UserResponse
+    suspend fun findById(id: Long): ResultWrapper<User>
 
-    fun save(user: UserRequest)
-
-    fun delete(id: Long)
-
-    fun update(user: UserRequest): UserResponse
-
+    suspend fun updatePassword(id: Long, request: UpdatePasswordRequest): ResultWrapper<String>
 }

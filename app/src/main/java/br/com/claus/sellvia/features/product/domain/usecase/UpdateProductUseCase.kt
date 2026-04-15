@@ -1,5 +1,6 @@
 package br.com.claus.sellvia.features.product.domain.usecase
 
+import android.util.Patterns
 import br.com.claus.sellvia.core.network.ResultWrapper
 import br.com.claus.sellvia.features.product.data.model.ProductRequest
 import br.com.claus.sellvia.features.product.domain.model.Product
@@ -24,6 +25,12 @@ class UpdateProductUseCase(private val repository: IProductRepository) {
             return ResultWrapper.Error(message = "Custo de produção não pode ser negativo")
         if (request.stockQuantity != null && request.stockQuantity < 0)
             return ResultWrapper.Error(message = "Quantidade em estoque não pode ser negativa")
+        if (!request.externalLink.isNullOrBlank()) {
+            if (request.externalLink.length > 500)
+                return ResultWrapper.Error(message = "Link externo deve ter no máximo 500 caracteres")
+            if (!Patterns.WEB_URL.matcher(request.externalLink).matches())
+                return ResultWrapper.Error(message = "Link externo inválido. Informe uma URL válida")
+        }
 
         return repository.update(request, id)
     }
