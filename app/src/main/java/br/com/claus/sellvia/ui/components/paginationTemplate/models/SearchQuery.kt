@@ -1,6 +1,6 @@
 package br.com.claus.sellvia.ui.components.paginationTemplate.models
 
-import br.com.claus.sellvia.data.enums.Direction
+import br.com.claus.sellvia.core.model.Direction
 
 open class SearchQuery(
     val page: Int = 0,
