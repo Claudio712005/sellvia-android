@@ -7,13 +7,14 @@ import br.com.claus.sellvia.core.data.storage.TokenManager
 import br.com.claus.sellvia.features.login.data.LoginRepository
 import kotlinx.coroutines.launch
 
-class LoginViewModel (
+class LoginViewModel(
     private val repository: LoginRepository,
-    private val tokenManager: TokenManager
-): ViewModel(){
+    private val tokenManager: TokenManager,
+) : ViewModel() {
 
     var username by mutableStateOf("")
     var password by mutableStateOf("")
+    var rememberMe by mutableStateOf(false)
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
 
@@ -21,9 +22,9 @@ class LoginViewModel (
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
+
             try {
                 val response = repository.login(username, password)
-                onSuccess()
 
                 if (response.isSuccessful && response.body() != null) {
                     val loginData = response.body()!!
@@ -33,11 +34,13 @@ class LoginViewModel (
                         refreshToken = loginData.refreshToken,
                         companyId = loginData.company.id,
                         userId = loginData.user.id,
+                        role = loginData.user.role
                     )
+                    tokenManager.saveKeepLoggedIn(rememberMe)
 
                     onSuccess()
                 } else {
-                    errorMessage = "Credenciais inválidas"
+                    errorMessage = "Usuário ou senha inválidos"
                 }
             } catch (e: Exception) {
                 errorMessage = "Erro de conexão: ${e.message}"

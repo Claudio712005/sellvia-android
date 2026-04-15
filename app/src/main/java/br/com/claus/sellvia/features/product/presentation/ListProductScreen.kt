@@ -104,7 +104,6 @@ fun ListProductScreen(
 
     }
 
-    // Bottom sheet
     if (uiState.selectedProduct != null) {
         ModalBottomSheet(
             onDismissRequest = { viewModel.onDismissSheet() },
@@ -125,7 +124,6 @@ fun ListProductScreen(
         }
     }
 
-    // Delete confirmation dialog
     if (uiState.showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { viewModel.onDismissDeleteConfirm() },
@@ -149,7 +147,6 @@ fun ListProductScreen(
         )
     }
 
-    // Edit save confirmation dialog
     if (uiState.showEditSaveConfirm) {
         AlertDialog(
             onDismissRequest = { viewModel.onDismissEditSaveConfirm() },

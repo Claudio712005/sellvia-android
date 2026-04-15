@@ -23,10 +23,11 @@ fun LoginForm(
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    rememberMe: Boolean,
+    onRememberMeChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
-    var rememberMe by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -92,17 +93,29 @@ fun LoginForm(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f),
+            ) {
                 Checkbox(
-                    enabled = false,
                     checked = rememberMe,
-                    onCheckedChange = { rememberMe = it },
+                    onCheckedChange = onRememberMeChange,
                     colors = CheckboxDefaults.colors(checkedColor = SellviaPrimary)
                 )
-                Text("Lembrar de mim", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                Text(
+                    text = "Manter conectado",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (rememberMe) SellviaPrimary else Color.Gray,
+                    fontWeight = if (rememberMe) FontWeight.SemiBold else FontWeight.Normal,
+                )
             }
             TextButton(onClick = { }, enabled = false) {
-                Text("Esqueceu a senha?", style = MaterialTheme.typography.bodySmall, color = SellviaPrimary, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Esqueceu a senha?",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = SellviaPrimary,
+                    fontWeight = FontWeight.Bold,
+                )
             }
         }
     }

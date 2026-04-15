@@ -97,8 +97,6 @@ class ListProductsViewModel(
         fetchCategories(page = 0)
     }
 
-    // --- Bottom sheet ---
-
     fun onSelectProduct(product: Product) {
         _uiState.update {
             it.copy(
@@ -126,8 +124,6 @@ class ListProductsViewModel(
     fun onEditRequest() {
         _uiState.update { it.copy(isEditMode = true) }
     }
-
-    // --- Delete ---
 
     fun onDeleteRequest() {
         _uiState.update { it.copy(showDeleteConfirm = true) }

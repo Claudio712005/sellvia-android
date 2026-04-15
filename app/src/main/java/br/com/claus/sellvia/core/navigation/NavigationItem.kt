@@ -4,7 +4,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddBusiness
 import androidx.compose.material.icons.outlined.AddShoppingCart
 import androidx.compose.material.icons.outlined.BookmarkAdd
+import androidx.compose.material.icons.outlined.Business
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.People
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class NavigationItem(
@@ -36,5 +38,19 @@ enum class NavigationItem(
         title = "Categorias",
         icon = Icons.Outlined.BookmarkAdd,
         route = CategoryRoute
+    ),
+
+    USERS(
+        title = "Meu Perfil",
+        icon = Icons.Outlined.People,
+        route = UserRoute,
+        visibleInBottomBar = false,
+    ),
+
+    COMPANY(
+        title = "Empresa",
+        icon = Icons.Outlined.Business,
+        route = CompanyRoute,
+        visibleInBottomBar = false,
     ),
 }

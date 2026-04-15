@@ -144,7 +144,7 @@ private fun StepConnector(filled: Boolean, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .height(2.dp)
-            .padding(bottom = 14.dp) // alinha visualmente com o centro das bolhas
+            .padding(bottom = 14.dp)
             .clip(RoundedCornerShape(50))
             .background(MaterialTheme.colorScheme.primary.copy(alpha = alpha))
     )

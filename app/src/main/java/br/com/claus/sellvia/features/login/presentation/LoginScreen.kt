@@ -71,7 +71,9 @@ fun LoginScreenContent(
                 username = viewModel.username,
                 onEmailChange = { viewModel.username = it },
                 password = viewModel.password,
-                onPasswordChange = { viewModel.password = it }
+                onPasswordChange = { viewModel.password = it },
+                rememberMe = viewModel.rememberMe,
+                onRememberMeChange = { viewModel.rememberMe = it },
             )
 
             if (viewModel.errorMessage != null) {

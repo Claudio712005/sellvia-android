@@ -18,5 +18,6 @@ data class CompanyLoginResponse(
     val id: Long,
     val name: String = "",
     val websiteUrl: String? = "",
-    val companyUrlLogo: String? = ""
+    val companyUrlLogo: String? = "",
+    val mainPhoneNumber: String? = "",
 )

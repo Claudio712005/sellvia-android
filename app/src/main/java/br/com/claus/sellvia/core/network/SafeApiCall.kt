@@ -5,7 +5,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
-// Para endpoints que retornam Response<T> (POST/PUT/DELETE)
 suspend fun <T> safeApiCall(call: suspend () -> Response<T>): ResultWrapper<T> {
     return try {
         val response = call()
@@ -23,7 +22,6 @@ suspend fun <T> safeApiCall(call: suspend () -> Response<T>): ResultWrapper<T> {
     }
 }
 
-// Para endpoints que retornam T diretamente, sem Response<T> (GET paginados)
 suspend fun <T> safeDirectCall(call: suspend () -> T): ResultWrapper<T> {
     return try {
         ResultWrapper.Success(call())
