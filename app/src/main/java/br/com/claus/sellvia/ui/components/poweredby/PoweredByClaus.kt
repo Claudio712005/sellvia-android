@@ -11,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import br.com.claus.sellvia.R
-import br.com.claus.sellvia.core.theme.SellviaBlueDark
-import br.com.claus.sellvia.core.theme.SellviaCyan
+import br.com.claus.sellvia.ui.theme.SellviaTertiary
 
 @Composable
 fun PoweredByClaus() {
@@ -23,7 +22,7 @@ fun PoweredByClaus() {
         Text(
             text = "Powered by",
             style = MaterialTheme.typography.bodySmall,
-            color = SellviaCyan.copy(alpha = 0.6f)
+            color = SellviaTertiary.copy(alpha = 0.6f)
         )
 
         Image(
