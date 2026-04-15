@@ -22,5 +22,7 @@ data class ProductResponse(
     val updatedBy: String?,
     val sku: String,
     val stockQuantity: Int?,
-    val type: ProductType
+    val type: ProductType,
+    val externalLink: String? = null,
+    val whatsappMessage: String? = null,
 )

@@ -22,5 +22,7 @@ data class Product(
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
     val createdBy: String? = null,
-    val updatedBy: String? = null
+    val updatedBy: String? = null,
+    val externalLink: String? = null,
+    val whatsappMessage: String? = null,
 )

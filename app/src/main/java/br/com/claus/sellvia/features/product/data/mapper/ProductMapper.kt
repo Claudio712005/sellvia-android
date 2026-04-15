@@ -21,7 +21,9 @@ fun ProductResponse.toDomain(): Product = Product(
     createdAt = createdAt,
     updatedAt = updatedAt,
     createdBy = createdBy,
-    updatedBy = updatedBy
+    updatedBy = updatedBy,
+    externalLink = externalLink,
+    whatsappMessage = whatsappMessage,
 )
 
 fun Pagination<ProductResponse>.toDomain(): Pagination<Product> = Pagination(

@@ -1,5 +1,8 @@
 package br.com.claus.sellvia.features.product.presentation
 
+import android.content.Context
+import android.net.Uri
+import android.util.Patterns
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.SortByAlpha
@@ -15,6 +18,7 @@ import br.com.claus.sellvia.features.product.domain.model.Product
 import br.com.claus.sellvia.features.product.domain.usecase.DeleteProductUseCase
 import br.com.claus.sellvia.features.product.domain.usecase.GetProductsUseCase
 import br.com.claus.sellvia.features.product.domain.usecase.UpdateProductUseCase
+import br.com.claus.sellvia.features.product.domain.usecase.UpdateProductImageUseCase
 import br.com.claus.sellvia.ui.components.paginationTemplate.models.Pagination
 import br.com.claus.sellvia.ui.components.paginationTemplate.models.SortOption
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,13 +39,18 @@ data class ListProductUiState(
     val showDeleteConfirm: Boolean = false,
     val showEditSaveConfirm: Boolean = false,
     val actionResult: SubmitResult? = null,
+    val editImageUri: Uri? = null,
+    val showImageUpdateConfirm: Boolean = false,
+    val isUploadingImage: Boolean = false,
 )
 
 class ListProductsViewModel(
+    private val context: Context,
     private val tokenManager: TokenManager,
     private val getProducts: GetProductsUseCase,
     private val deleteProduct: DeleteProductUseCase,
     private val updateProduct: UpdateProductUseCase,
+    private val updateProductImage: UpdateProductImageUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ListProductUiState())
@@ -117,6 +126,8 @@ class ListProductsViewModel(
                 editFieldErrors = RegistryProductFieldErrors(),
                 showDeleteConfirm = false,
                 showEditSaveConfirm = false,
+                editImageUri = null,
+                showImageUpdateConfirm = false,
             )
         }
     }
@@ -266,6 +277,93 @@ class ListProductsViewModel(
         }
     }
 
+    fun onEditExternalLinkChange(value: String) {
+        _uiState.update {
+            it.copy(
+                editFormData = it.editFormData?.copy(externalLink = value.ifBlank { null }),
+                editFieldErrors = it.editFieldErrors.copy(externalLink = null),
+            )
+        }
+    }
+
+    fun onEditWhatsappMessageChange(value: String) {
+        _uiState.update {
+            it.copy(editFormData = it.editFormData?.copy(whatsappMessage = value.ifBlank { null }))
+        }
+    }
+
+    fun onEditImageSelected(uri: Uri?) {
+        _uiState.update { it.copy(editImageUri = uri) }
+    }
+
+    fun onImageUpdateRequest() {
+        val uri = _uiState.value.editImageUri ?: return
+        val (valid, error) = validateImageSize(uri)
+        if (!valid) {
+            _uiState.update { it.copy(actionResult = SubmitResult.Error(error ?: "Imagem inválida")) }
+            return
+        }
+        _uiState.update { it.copy(showImageUpdateConfirm = true) }
+    }
+
+    fun onDismissImageUpdateConfirm() {
+        _uiState.update { it.copy(showImageUpdateConfirm = false) }
+    }
+
+    fun onConfirmImageUpdate() {
+        val product = _uiState.value.selectedProduct ?: return
+        val uri = _uiState.value.editImageUri ?: return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isUploadingImage = true, showImageUpdateConfirm = false) }
+            when (val result = updateProductImage(product.id, uri)) {
+                is ResultWrapper.Success -> {
+                    val updatedItems = _uiState.value.paginationData?.items
+                        ?.map { if (it.id == product.id) result.data else it } ?: emptyList()
+                    _uiState.update {
+                        it.copy(
+                            isUploadingImage = false,
+                            editImageUri = null,
+                            selectedProduct = result.data,
+                            paginationData = it.paginationData?.copy(items = updatedItems),
+                            actionResult = SubmitResult.Success,
+                        )
+                    }
+                }
+                is ResultWrapper.Error -> _uiState.update {
+                    it.copy(
+                        isUploadingImage = false,
+                        actionResult = SubmitResult.Error(result.message),
+                    )
+                }
+                ResultWrapper.Loading -> Unit
+            }
+        }
+    }
+
+    private fun validateImageSize(uri: Uri): Pair<Boolean, String?> {
+        return try {
+            var fileSize = 0L
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                val buffer = ByteArray(8 * 1024)
+                var read: Int
+                while (input.read(buffer).also { read = it } != -1) {
+                    fileSize += read
+                }
+            }
+            when {
+                fileSize <= 0 -> Pair(false, "Arquivo inválido")
+                fileSize > UploadConfig.MAX_FILE_SIZE_BYTES -> Pair(
+                    false,
+                    "Imagem muito grande. Máximo: ${UploadConfig.MAX_FILE_SIZE_MB}MB " +
+                            "(atual: ${"%.1f".format(fileSize / (1024.0 * 1024.0))}MB)"
+                )
+                else -> Pair(true, null)
+            }
+        } catch (e: Exception) {
+            Pair(false, "Erro ao validar imagem: ${e.message}")
+        }
+    }
+
     private fun validateEditFields(): Boolean {
         val data = _uiState.value.editFormData ?: return false
         var errors = RegistryProductFieldErrors()
@@ -295,6 +393,13 @@ class ListProductsViewModel(
         if (data.stockQuantity != null && data.stockQuantity < 0) {
             errors = errors.copy(stockQuantity = "Quantidade em estoque não pode ser negativa"); isValid = false
         }
+        if (!data.externalLink.isNullOrBlank()) {
+            if (data.externalLink.length > 500) {
+                errors = errors.copy(externalLink = "Link externo deve ter no máximo 500 caracteres"); isValid = false
+            } else if (!Patterns.WEB_URL.matcher(data.externalLink).matches()) {
+                errors = errors.copy(externalLink = "Link externo inválido. Informe uma URL válida"); isValid = false
+            }
+        }
 
         _uiState.update { it.copy(editFieldErrors = errors) }
         return isValid
@@ -314,4 +419,6 @@ private fun Product.toEditRequest() = ProductRequest(
     sku = sku,
     stockQuantity = stockQuantity,
     type = type,
+    externalLink = externalLink,
+    whatsappMessage = whatsappMessage,
 )

@@ -66,6 +66,19 @@ class ProductRepositoryImpl(
         return safeApiCall { service.update(request, id) }.mapSuccess { it.toDomain() }
     }
 
+    override suspend fun updateImage(id: Long, imageUri: Uri): ResultWrapper<Product> {
+        val imageBytes = context.contentResolver
+            .openInputStream(imageUri)
+            ?.readBytes()
+            ?: return ResultWrapper.Error(message = "Não foi possível ler a imagem selecionada")
+
+        val mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+        val imageBody = imageBytes.toRequestBody(mimeType.toMediaTypeOrNull())
+        val imagePart = MultipartBody.Part.createFormData("image", "product_image.jpg", imageBody)
+
+        return safeApiCall { service.updateImage(id, imagePart) }.mapSuccess { it.toDomain() }
+    }
+
     override suspend fun delete(id: Long): ResultWrapper<Unit> {
         return safeApiCall { service.delete(id) }
     }

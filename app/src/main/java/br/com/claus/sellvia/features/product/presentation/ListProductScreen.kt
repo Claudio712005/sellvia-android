@@ -1,5 +1,11 @@
 package br.com.claus.sellvia.features.product.presentation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,15 +27,20 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Inventory
+import androidx.compose.material.icons.outlined.AddPhotoAlternate
+import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.MoneyOff
 import androidx.compose.material.icons.outlined.QrCode
 import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -38,6 +52,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
@@ -164,6 +182,24 @@ fun ListProductScreen(
             }
         )
     }
+
+    if (uiState.showImageUpdateConfirm) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onDismissImageUpdateConfirm() },
+            title = { Text("Alterar imagem") },
+            text = { Text("Confirmar a substituição da imagem do produto \"${uiState.selectedProduct?.name}\"?") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onConfirmImageUpdate() }) {
+                    Text("Confirmar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDismissImageUpdateConfirm() }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -229,6 +265,10 @@ private fun EditProductForm(
     val formData = uiState.editFormData ?: return
     val errors = uiState.editFieldErrors
 
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri -> viewModel.onEditImageSelected(uri) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,6 +282,78 @@ private fun EditProductForm(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
         )
+
+        HorizontalDivider()
+
+        Text(
+            text = "Imagem do produto",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        val imageModel: Any? = uiState.editImageUri ?: uiState.selectedProduct?.imageUrl
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.06f))
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(14.dp)
+                )
+        ) {
+            if (imageModel != null) {
+                AsyncImage(
+                    model = imageModel,
+                    contentDescription = "Imagem do produto",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(14.dp))
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.85f))
+                    .clickable {
+                        imagePickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AddPhotoAlternate,
+                    contentDescription = "Alterar imagem",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+
+        if (uiState.editImageUri != null) {
+            Button(
+                onClick = { viewModel.onImageUpdateRequest() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isUploadingImage,
+            ) {
+                if (uiState.isUploadingImage) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                } else {
+                    Text("Salvar nova imagem")
+                }
+            }
+        }
 
         HorizontalDivider()
 
@@ -335,6 +447,35 @@ private fun EditProductForm(
                 error = errors.stockQuantity,
             )
         }
+
+        Text(
+            text = "Links e Contato (opcional)",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        ProductTextField(
+            value = formData.externalLink ?: "",
+            onValueChange = { viewModel.onEditExternalLinkChange(it) },
+            label = "Link externo",
+            placeholder = "Ex: https://meusite.com/produto",
+            leadingIcon = Icons.Outlined.Link,
+            singleLine = true,
+            supportingText = "URL de divulgação do produto (máx. 500 caracteres)",
+            error = errors.externalLink,
+        )
+
+        ProductTextField(
+            value = formData.whatsappMessage ?: "",
+            onValueChange = { viewModel.onEditWhatsappMessageChange(it) },
+            label = "Mensagem do WhatsApp",
+            placeholder = "Ex: Olá, tenho interesse no produto...",
+            leadingIcon = Icons.Outlined.Message,
+            singleLine = false,
+            minLines = 3,
+            maxLines = 5,
+            supportingText = "Mensagem padrão para contato via WhatsApp",
+        )
 
         Button(
             onClick = { viewModel.onEditSaveRequest() },

@@ -54,6 +54,13 @@ interface ProductService {
         @Path("id") id: Long
     ): Response<ProductResponse>
 
+    @Multipart
+    @PUT("products/{id}/update-image")
+    suspend fun updateImage(
+        @Path("id") id: Long,
+        @Part image: MultipartBody.Part
+    ): Response<ProductResponse>
+
     @DELETE("products/{id}")
     suspend fun delete(
         @Path("id") id: Long

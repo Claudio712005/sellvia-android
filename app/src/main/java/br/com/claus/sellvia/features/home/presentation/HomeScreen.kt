@@ -75,7 +75,6 @@ fun HomeScreen(
                 title = "Catálogo de Produtos",
                 subtitle = "Gere e baixe o catálogo completo em PDF",
                 icon = Icons.Outlined.PictureAsPdf,
-                highlighted = true,
                 badge = "PDF",
                 onClick = { catalogViewModel.onOpenSheet() },
             )

@@ -1,6 +1,8 @@
 package br.com.claus.sellvia.features.home.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,18 +42,46 @@ fun HomeBlock(
     data: HomeBlockData,
     modifier: Modifier = Modifier,
 ) {
-    val containerColor = if (data.highlighted) SellviaNotSelected else LightSurface
-    val contentColor = if (data.highlighted) SellviaPrimary
-    else MaterialTheme.colorScheme.onSurface
-    val iconTint = if (data.highlighted) SellviaPrimary
-    else MaterialTheme.colorScheme.onSurfaceVariant
+    val isHighlighted = data.highlighted
+
+    val containerColor = if (isHighlighted) {
+        SellviaPrimary.copy(alpha = 0.08f)
+    } else {
+        LightSurface
+    }
+
+    val contentColor = if (isHighlighted) {
+        SellviaPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+
+    val iconContainerColor = if (isHighlighted) {
+        SellviaPrimary.copy(alpha = 0.12f)
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant
+    }
+
+    val iconTint = if (isHighlighted) {
+        SellviaPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
 
     Card(
         onClick = data.onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (data.highlighted) 4.dp else 2.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isHighlighted) 6.dp else 2.dp
+        ),
+        border = if (isHighlighted) {
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                SellviaPrimary.copy(alpha = 0.2f)
+            )
+        } else null
     ) {
         Row(
             modifier = Modifier
@@ -60,24 +90,37 @@ fun HomeBlock(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Icon(
-                imageVector = data.icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(32.dp),
-            )
+
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        color = iconContainerColor,
+                        shape = RoundedCornerShape(14.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = data.icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
 
             Column(modifier = Modifier.weight(1f)) {
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         text = data.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = if (isHighlighted) FontWeight.Bold else FontWeight.SemiBold,
                         color = contentColor,
                     )
+
                     data.badge?.let {
                         SuggestionChip(
                             onClick = {},
@@ -85,19 +128,31 @@ fun HomeBlock(
                                 Text(
                                     text = it,
                                     style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Medium
                                 )
                             },
                             colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                containerColor = if (isHighlighted) {
+                                    SellviaPrimary.copy(alpha = 0.15f)
+                                } else {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                },
+                                labelColor = if (isHighlighted) {
+                                    SellviaPrimary
+                                } else {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                },
                             ),
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.size(4.dp))
+
                 Text(
                     text = data.subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = contentColor.copy(alpha = 0.7f),
+                    color = contentColor.copy(alpha = if (isHighlighted) 0.85f else 0.7f),
                 )
             }
         }
