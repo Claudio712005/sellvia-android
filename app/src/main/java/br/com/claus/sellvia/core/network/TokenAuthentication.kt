@@ -42,7 +42,8 @@ class TokenAuthenticator(
                         newTokens.token,
                         newTokens.refreshToken,
                         newTokens.company.id ?: 0L,
-                        newTokens.user.id ?: 0L
+                        newTokens.user.id ?: 0L,
+                        newTokens.user.role
                     )
                 }
 

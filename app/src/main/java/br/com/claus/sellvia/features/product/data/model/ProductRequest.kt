@@ -16,4 +16,6 @@ data class ProductRequest(
     val sku: String,
     val stockQuantity: Int? = null,
     val type: ProductType = ProductType.PHYSICAL,
+    val externalLink: String? = null,
+    val whatsappMessage: String? = null,
 )

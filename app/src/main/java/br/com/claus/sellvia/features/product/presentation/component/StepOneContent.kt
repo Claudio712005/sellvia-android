@@ -15,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.QrCode
 import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.Icon
@@ -45,7 +47,9 @@ fun StepOneContent(
     modifier: Modifier = Modifier,
     onCategorySelected: (Category?) -> Unit,
     categoryViewModel: ListCategoryViewModel,
-    onImageRemove: () -> Unit
+    onImageRemove: () -> Unit,
+    onExternalLinkChange: (String) -> Unit,
+    onWhatsappMessageChange: (String) -> Unit,
 ) {
     var showCategoryPicker by remember { mutableStateOf(false) }
 
@@ -122,6 +126,35 @@ fun StepOneContent(
                 minLines = 4,
                 maxLines = 6,
                 error = uiState.fieldErrors.description
+            )
+        }
+
+        item { StepSectionLabel(label = "Links e Contato (opcional)") }
+
+        item {
+            ProductTextField(
+                value = uiState.data.externalLink ?: "",
+                onValueChange = onExternalLinkChange,
+                label = "Link externo",
+                placeholder = "Ex: https://meusite.com/produto",
+                leadingIcon = Icons.Outlined.Link,
+                singleLine = true,
+                supportingText = "URL de divulgação do produto (máx. 500 caracteres)",
+                error = uiState.fieldErrors.externalLink
+            )
+        }
+
+        item {
+            ProductTextField(
+                value = uiState.data.whatsappMessage ?: "",
+                onValueChange = onWhatsappMessageChange,
+                label = "Mensagem do WhatsApp",
+                placeholder = "Ex: Olá, tenho interesse no produto...",
+                leadingIcon = Icons.Outlined.Message,
+                singleLine = false,
+                minLines = 3,
+                maxLines = 5,
+                supportingText = "Mensagem padrão para contato via WhatsApp"
             )
         }
     }

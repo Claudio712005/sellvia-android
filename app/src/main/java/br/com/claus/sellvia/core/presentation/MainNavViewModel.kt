@@ -1,11 +1,17 @@
 package br.com.claus.sellvia.core.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import br.com.claus.sellvia.core.data.storage.TokenManager
+import br.com.claus.sellvia.core.model.UserRole
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class MainNavViewModel : ViewModel() {
+class MainNavViewModel(
+    private val tokenManager: TokenManager,
+) : ViewModel() {
 
     private val _fabVisible = MutableStateFlow(false)
     val fabVisible: StateFlow<Boolean> = _fabVisible.asStateFlow()
@@ -15,6 +21,15 @@ class MainNavViewModel : ViewModel() {
 
     private val _openCategoryModal = MutableStateFlow(false)
     val openCategoryModal: StateFlow<Boolean> = _openCategoryModal.asStateFlow()
+
+    private val _userRole = MutableStateFlow<UserRole?>(null)
+    val userRole: StateFlow<UserRole?> = _userRole.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            tokenManager.userRole().collect { _userRole.value = it }
+        }
+    }
 
     fun showFab(action: () -> Unit) {
         _fabVisible.value = true

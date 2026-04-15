@@ -10,5 +10,5 @@ import org.koin.dsl.module
 val coreModule = module {
     single { TokenManager(androidContext()) }
     single { LoadingViewModel() }
-    viewModel { MainNavViewModel() }
+    viewModel { MainNavViewModel(get()) }
 }

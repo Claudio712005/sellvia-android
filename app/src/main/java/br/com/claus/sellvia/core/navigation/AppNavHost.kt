@@ -4,7 +4,9 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.com.claus.sellvia.core.data.storage.SessionGuard
 import br.com.claus.sellvia.core.data.storage.TokenManager
+import kotlinx.coroutines.flow.firstOrNull
 
 @Composable
 fun AppNavHost(tokenManager: TokenManager) {
@@ -12,8 +14,17 @@ fun AppNavHost(tokenManager: TokenManager) {
 
     val tokenState by tokenManager.accessToken.collectAsState(initial = "loading")
 
-    if (tokenState == "loading") {
-        return
+    if (tokenState == "loading") return
+
+    LaunchedEffect(tokenState) {
+        if (SessionGuard.sessionActive) return@LaunchedEffect
+
+        val keepLoggedIn = tokenManager.keepLoggedIn().firstOrNull() ?: true
+        if (!keepLoggedIn && tokenState != null) {
+            tokenManager.clearTokens()
+        }
+
+        SessionGuard.sessionActive = true
     }
 
     val startDest = if (tokenState != null) "main_graph" else "auth_graph"

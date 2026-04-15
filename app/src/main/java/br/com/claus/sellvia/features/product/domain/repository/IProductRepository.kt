@@ -15,5 +15,7 @@ interface IProductRepository {
 
     suspend fun update(request: ProductRequest, id: Long): ResultWrapper<Product>
 
+    suspend fun updateImage(id: Long, imageUri: Uri): ResultWrapper<Product>
+
     suspend fun delete(id: Long): ResultWrapper<Unit>
 }

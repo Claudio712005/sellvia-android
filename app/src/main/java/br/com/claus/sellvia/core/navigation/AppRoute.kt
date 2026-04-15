@@ -39,3 +39,9 @@ object CategoryRoute: MainNavRoute
 
 @Serializable
 object RegistryProductRoute: MainNavRoute
+
+@Serializable
+object UserRoute : MainNavRoute
+
+@Serializable
+object CompanyRoute : MainNavRoute
