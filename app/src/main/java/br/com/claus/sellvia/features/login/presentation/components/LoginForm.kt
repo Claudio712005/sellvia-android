@@ -109,14 +109,6 @@ fun LoginForm(
                     fontWeight = if (rememberMe) FontWeight.SemiBold else FontWeight.Normal,
                 )
             }
-            TextButton(onClick = { }, enabled = false) {
-                Text(
-                    text = "Esqueceu a senha?",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SellviaPrimary,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
         }
     }
 }

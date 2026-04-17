@@ -94,35 +94,35 @@ fun LoginScreenContent(
                 enabled = !viewModel.isLoading
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
-                Text(
-                    text = " Ou entrar com ",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextButton(onClick = { }, enabled = false) {
-                Text(
-                    text = buildAnnotatedString {
-                        append("Ainda não tem conta? ")
-                        withStyle(style = SpanStyle(color = SellviaPrimary, fontWeight = FontWeight.Bold)) {
-                            append("Cadastre-se")
-                        }
-                    },
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+//            Spacer(modifier = Modifier.height(32.dp))
+//
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
+//                Text(
+//                    text = " Ou entrar com ",
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = Color.Gray,
+//                    modifier = Modifier.padding(horizontal = 8.dp)
+//                )
+//                HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
+//            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            TextButton(onClick = { }, enabled = false) {
+//                Text(
+//                    text = buildAnnotatedString {
+//                        append("Ainda não tem conta? ")
+//                        withStyle(style = SpanStyle(color = SellviaPrimary, fontWeight = FontWeight.Bold)) {
+//                            append("Cadastre-se")
+//                        }
+//                    },
+//                    style = MaterialTheme.typography.bodyMedium
+//                )
+//            }
 
             Spacer(modifier = Modifier.weight(1f))
 
