@@ -14,12 +14,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
 data class CatalogUiState(
     val showSheet: Boolean = false,
     val displayOptions: CatalogDisplayOptions = CatalogDisplayOptions(),
     val filterOptions: CatalogFilterOptions = CatalogFilterOptions(),
-    val isEnqueuing: Boolean = false,
-    val downloadMessage: String? = null,
+    val downloadStatus: DownloadStatus = DownloadStatus.Idle,
 )
 
 class CatalogViewModel(
@@ -47,46 +47,35 @@ class CatalogViewModel(
     }
 
     fun onDownload() {
+        if (_uiState.value.downloadStatus is DownloadStatus.InProgress) return
+        _uiState.update { it.copy(downloadStatus = DownloadStatus.InProgress, showSheet = false) }
+
         viewModelScope.launch {
             val companyId = tokenManager.companyId().firstOrNull()
-            val token = tokenManager.accessToken.firstOrNull()
-
             if (companyId == null) {
-                _uiState.update { it.copy(downloadMessage = "Empresa não identificada") }
-                return@launch
-            }
-            if (token == null) {
-                _uiState.update { it.copy(downloadMessage = "Sessão expirada. Faça login novamente.") }
+                _uiState.update {
+                    it.copy(downloadStatus = DownloadStatus.Error("Empresa não identificada."))
+                }
                 return@launch
             }
 
-            _uiState.update { it.copy(isEnqueuing = true) }
-
-            when (downloadCatalog(
-                companyId = companyId,
-                token = token,
-                filter = _uiState.value.filterOptions,
-                display = _uiState.value.displayOptions,
-            )) {
-                is ResultWrapper.Success -> _uiState.update {
-                    it.copy(
-                        isEnqueuing = false,
-                        showSheet = false,
-                        downloadMessage = "Download iniciado! Acompanhe na barra de notificações.",
+            _uiState.update {
+                it.copy(downloadStatus = when (val result = downloadCatalog(
+                    companyId = companyId,
+                    filter = it.filterOptions,
+                    display = it.displayOptions,
+                )) {
+                    is ResultWrapper.Success -> DownloadStatus.Success(result.data)
+                    is ResultWrapper.Error -> DownloadStatus.Error(
+                        "Erro ao gerar o catálogo. Verifique sua conexão e tente novamente."
                     )
-                }
-                is ResultWrapper.Error -> _uiState.update {
-                    it.copy(
-                        isEnqueuing = false,
-                        downloadMessage = "Erro ao iniciar download. Tente novamente.",
-                    )
-                }
-                ResultWrapper.Loading -> Unit
+                    ResultWrapper.Loading -> DownloadStatus.InProgress
+                })
             }
         }
     }
 
-    fun dismissDownloadMessage() {
-        _uiState.update { it.copy(downloadMessage = null) }
+    fun onDismissDownload() {
+        _uiState.update { it.copy(downloadStatus = DownloadStatus.Idle) }
     }
 }

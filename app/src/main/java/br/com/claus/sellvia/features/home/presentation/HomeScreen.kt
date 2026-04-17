@@ -1,5 +1,7 @@
 package br.com.claus.sellvia.features.home.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,19 +14,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Business
 import androidx.compose.material.icons.outlined.ManageAccounts
 import androidx.compose.material.icons.outlined.PictureAsPdf
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +39,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.claus.sellvia.features.catalog.presentation.CatalogViewModel
+import br.com.claus.sellvia.features.catalog.presentation.DownloadStatus
 import br.com.claus.sellvia.features.catalog.presentation.components.CatalogBottomSheet
+import br.com.claus.sellvia.features.catalog.presentation.components.CatalogDownloadingOverlay
 import br.com.claus.sellvia.features.home.presentation.components.HomeBlock
 import br.com.claus.sellvia.features.home.presentation.components.HomeBlockData
 import br.com.claus.sellvia.ui.theme.SellviaNotSelected
@@ -62,12 +60,6 @@ fun HomeScreen(
     val uiState by catalogViewModel.uiState.collectAsState()
     val homeState by homeViewModel.uiState.collectAsState()
     val context = LocalContext.current
-
-    LaunchedEffect(uiState.downloadMessage) {
-        val msg = uiState.downloadMessage ?: return@LaunchedEffect
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-        catalogViewModel.dismissDownloadMessage()
-    }
 
     val blocks = buildList {
         add(
@@ -138,6 +130,36 @@ fun HomeScreen(
             onFilterOptionsUpdate = { catalogViewModel.onFilterOptionsUpdate(it) },
             onDownload = { catalogViewModel.onDownload() },
         )
+    }
+
+    if (uiState.downloadStatus != DownloadStatus.Idle) {
+        CatalogDownloadingOverlay(
+            status = uiState.downloadStatus,
+            onOpenPdf = { uri -> openPdfFile(context, uri) },
+            onRetry = { catalogViewModel.onDownload() },
+            onDismiss = { catalogViewModel.onDismissDownload() },
+        )
+    }
+}
+
+private fun openPdfFile(context: android.content.Context, uri: Uri) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(uri, "application/pdf")
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(
+            Intent.createChooser(intent, "Abrir catálogo PDF").apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
+    } else {
+        Toast.makeText(
+            context,
+            "Nenhum aplicativo encontrado para abrir PDF. Acesse em Downloads.",
+            Toast.LENGTH_LONG,
+        ).show()
     }
 }
 

@@ -51,6 +51,7 @@ import br.com.claus.sellvia.core.model.Direction
 import br.com.claus.sellvia.features.catalog.domain.model.CatalogDisplayOptions
 import br.com.claus.sellvia.features.catalog.domain.model.CatalogFilterOptions
 import br.com.claus.sellvia.features.catalog.presentation.CatalogUiState
+import br.com.claus.sellvia.features.catalog.presentation.DownloadStatus
 import br.com.claus.sellvia.features.product.domain.model.ProductType
 
 private val sortOptions = listOf(
@@ -135,12 +136,13 @@ fun CatalogBottomSheet(
 
                 Spacer(Modifier.height(20.dp))
 
+                val isDownloading = uiState.downloadStatus is DownloadStatus.InProgress
                 Button(
                     onClick = onDownload,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !uiState.isEnqueuing,
+                    enabled = !isDownloading,
                 ) {
-                    if (uiState.isEnqueuing) {
+                    if (isDownloading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(18.dp),
                             strokeWidth = 2.dp,

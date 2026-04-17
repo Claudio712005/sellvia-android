@@ -1,5 +1,6 @@
 package br.com.claus.sellvia.features.catalog.domain.usecase
 
+import android.net.Uri
 import br.com.claus.sellvia.core.network.ResultWrapper
 import br.com.claus.sellvia.features.catalog.domain.model.CatalogDisplayOptions
 import br.com.claus.sellvia.features.catalog.domain.model.CatalogFilterOptions
@@ -9,12 +10,10 @@ class DownloadCatalogUseCase(private val repository: ICatalogRepository) {
 
     suspend operator fun invoke(
         companyId: Long,
-        token: String,
         filter: CatalogFilterOptions = CatalogFilterOptions(),
         display: CatalogDisplayOptions = CatalogDisplayOptions(),
-    ): ResultWrapper<Long> = repository.downloadCatalog(
+    ): ResultWrapper<Uri> = repository.downloadCatalog(
         companyId = companyId,
-        token = token,
         filter = filter,
         display = display,
     )
