@@ -12,6 +12,12 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
 
+fun getProp(name: String): String {
+    return System.getenv(name)
+        ?: localProperties.getProperty(name)
+        ?: throw GradleException("Missing $name")
+}
+
 android {
     namespace = "br.com.claus.sellvia"
 
@@ -29,7 +35,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val baseUrl = localProperties.getProperty("BASE_URL") ?: ""
+        val baseUrl = getProp("BASE_URL")
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
@@ -37,12 +43,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = rootProject.file("sellvia_app_key.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-                ?: throw GradleException("Missing KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEY_ALIAS")
-                ?: throw GradleException("Missing KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD")
-                ?: throw GradleException("Missing KEY_PASSWORD")
+            storePassword = getProp("KEYSTORE_PASSWORD")
+            keyAlias = getProp("KEY_ALIAS")
+            keyPassword = getProp("KEY_PASSWORD")
         }
     }
 

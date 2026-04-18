@@ -2,8 +2,8 @@ package br.com.claus.sellvia.core.di.module
 
 import br.com.claus.sellvia.BuildConfig
 import br.com.claus.sellvia.core.network.AuthInterceptor
-import br.com.claus.sellvia.features.login.data.LoginService
 import br.com.claus.sellvia.core.network.TokenAuthenticator
+import br.com.claus.sellvia.features.login.data.LoginService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -40,8 +40,13 @@ val networkModule = module {
     }
 
     single(named("refreshRetrofit")) {
+        val baseUrl = requireNotNull(BuildConfig.BASE_URL) {
+            "BASE_URL is null"
+        }.takeIf { it.isNotBlank() }
+            ?: throw IllegalStateException("BASE_URL is empty")
+
         Retrofit.Builder()
-            .baseUrl("${BuildConfig.BASE_URL}api/v1.0.0/")
+            .baseUrl("${baseUrl}api/v1.0.0/")
             .client(get(named("refreshClient")))
             .addConverterFactory(GsonConverterFactory.create(get()))
             .build()
@@ -79,8 +84,13 @@ val networkModule = module {
     }
 
     single {
+        val baseUrl = requireNotNull(BuildConfig.BASE_URL) {
+            "BASE_URL is null"
+        }.takeIf { it.isNotBlank() }
+            ?: throw IllegalStateException("BASE_URL is empty")
+
         Retrofit.Builder()
-            .baseUrl("${BuildConfig.BASE_URL}api/v1.0.0/")
+            .baseUrl("${baseUrl}api/v1.0.0/")
             .client(get())
             .addConverterFactory(GsonConverterFactory.create(get()))
             .build()
