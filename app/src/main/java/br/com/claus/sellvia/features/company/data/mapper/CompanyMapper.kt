@@ -5,8 +5,8 @@ import br.com.claus.sellvia.features.company.domain.model.Company
 
 fun CompanyResponse.toDomain() = Company(
     id = id ?: 0L,
-    name = name,
-    websiteUrl = websiteUrl,
-    logoUrl = companyUrlLogo,
-    mainPhoneNumber = mainPhoneNumber,
+    name = name.orEmpty(),
+    websiteUrl = websiteUrl.orEmpty(),
+    logoUrl = companyUrlLogo.orEmpty(),
+    mainPhoneNumber = mainPhoneNumber.orEmpty(),
 )

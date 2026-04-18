@@ -16,7 +16,7 @@ fun CategoryResponse.toDomain(): Category = Category(
 )
 
 fun Pagination<CategoryResponse>.toDomain(): Pagination<Category> = Pagination(
-    items = items.map { it.toDomain() },
+    items = items.orEmpty().map { it.toDomain() },
     currentPage = currentPage,
     perPage = perPage,
     totalPages = totalPages,
