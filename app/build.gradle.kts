@@ -13,9 +13,14 @@ if (localPropertiesFile.exists()) {
 }
 
 fun getProp(name: String): String {
-    return System.getenv(name)
+    val value = System.getenv(name)
         ?: localProperties.getProperty(name)
-        ?: throw GradleException("Missing $name")
+
+    if (value.isNullOrBlank()) {
+        throw GradleException("Missing or empty property: $name")
+    }
+
+    return value.trim()
 }
 
 android {
@@ -33,7 +38,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         val baseUrl = getProp("BASE_URL")
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
