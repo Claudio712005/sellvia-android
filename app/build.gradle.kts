@@ -14,12 +14,12 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "br.com.claus.sellvia"
-    compileSdk {
-        version = release(36)
-    }
+
+    compileSdk = 36
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     defaultConfig {
@@ -29,26 +29,30 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val baseUrl = localProperties.getProperty("BASE_URL") ?: ""
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("keystore.jks")
+            storePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = localProperties.getProperty("KEY_ALIAS") ?: ""
+            keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: ""
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        compose = true
     }
 }
 
