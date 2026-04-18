@@ -35,7 +35,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = rootProject.file("keystore.jks")
+            storeFile = rootProject.file("sellvia_app_key.jks")
             storePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: ""
             keyAlias = localProperties.getProperty("KEY_ALIAS") ?: ""
             keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: ""
