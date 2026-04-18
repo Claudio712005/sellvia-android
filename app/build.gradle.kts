@@ -33,12 +33,16 @@ android {
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
+
     signingConfigs {
         create("release") {
             storeFile = rootProject.file("sellvia_app_key.jks")
-            storePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: ""
-            keyAlias = localProperties.getProperty("KEY_ALIAS") ?: ""
-            keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: ""
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: throw GradleException("Missing KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: throw GradleException("Missing KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: throw GradleException("Missing KEY_PASSWORD")
         }
     }
 
