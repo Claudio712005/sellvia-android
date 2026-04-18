@@ -24,3 +24,5 @@ output-metadata.json
 *.dm
 
 .idea
+
+keystore.txt
