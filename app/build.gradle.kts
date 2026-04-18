@@ -1,3 +1,4 @@
+import java.net.URI
 import java.util.Properties
 
 plugins {
@@ -6,26 +7,36 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(localPropertiesFile.inputStream())
+val localProperties = Properties().also { props ->
+    val file = rootProject.file("local.properties")
+    if (file.exists()) props.load(file.inputStream())
 }
 
-fun getProp(name: String): String {
-    val value = System.getenv(name)
-        ?: localProperties.getProperty(name)
-
-    if (value.isNullOrBlank()) {
-        throw GradleException("Missing or empty property: $name")
+fun getProp(name: String, required: Boolean = true): String? {
+    val value = (System.getenv(name) ?: localProperties.getProperty(name))?.trim()
+    if (required && value.isNullOrBlank()) {
+        throw GradleException(
+            "\n\n❌ Propriedade obrigatória ausente: '$name'" +
+            "\n   → Defina como variável de ambiente ou em local.properties\n"
+        )
     }
+    return value?.ifBlank { null }
+}
 
-    return value.trim()
+fun validateBaseUrl(url: String, propName: String) {
+    val uri = runCatching { URI(url) }.getOrElse {
+        throw GradleException("❌ '$propName' não é uma URL válida: $url")
+    }
+    if (uri.scheme !in listOf("http", "https")) {
+        throw GradleException("❌ '$propName' deve começar com http:// ou https:// — valor atual: $url")
+    }
+    if (!url.endsWith("/")) {
+        throw GradleException("❌ '$propName' deve terminar com '/' — valor atual: $url")
+    }
 }
 
 android {
     namespace = "br.com.claus.sellvia"
-
     compileSdk = 36
 
     buildFeatures {
@@ -39,11 +50,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0.1"
-
-        val baseUrl = getProp("BASE_URL")
-        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
-
 
     signingConfigs {
         create("release") {
@@ -55,14 +62,23 @@ android {
     }
 
     buildTypes {
+        debug {
+            val baseUrl = getProp("BASE_URL", required = false) ?: "http://10.0.2.2:8080/"
+            validateBaseUrl(baseUrl, "BASE_URL")
+            buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+        }
+
         release {
+            val baseUrl = getProp("BASE_URL")!!
+            validateBaseUrl(baseUrl, "BASE_URL")
+            buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
-
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -104,5 +120,4 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
-
 }
