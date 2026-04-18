@@ -25,6 +25,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          BASE_URL: ${{ secrets.BASE_URL }}
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
